@@ -1,7 +1,6 @@
 from matplotlib import image
 import numpy as np
 import cv2
-from torch import imag
 
 class Stitcher:
 
@@ -23,16 +22,18 @@ class Stitcher:
 
         result[0:imageB.shape[0], 0:imageB.shape[1]] = imageB
 
-        self.cv_show('result', result)
+        # self.cv_show('result', result)
 
-        if showMatches:
-            vis = self.drawMatches(imageA, imageB, kpsA, kpsB, matches, status)
+        # if showMatches:
+        #     # pass
+        #     # vis = self.drawMatches(imageA, imageB, kpsA, kpsB, matches)
+        #     vis = cv2.drawMatchesKnn(imageA, kpsA[0], imageB, kpsB[1], matches, None, flags=2)
 
-        return result, vis
+        return result
 
-    def drawMatches(imageA, imageB, kpsA, kpsB, matches, status):
-        image = cv2.drawMatchesKnn(imageA, kpsA, imageB, kpsB, matches, None, flags=2)
-        return image
+    # def drawMatches(imageA, imageB, kpsA, kpsB, matches):
+    #     image = cv2.drawMatchesKnn(imageA, kpsA, imageB, kpsB, matches, None, flags=2)
+    #     return image
 
     def cv_show(self, strName, image):
         cv2.imshow(strName, image)
@@ -41,7 +42,7 @@ class Stitcher:
     def detectAndDescribe(self, image):
          gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-         descriptor = cv2.xfeatures2d.SIFT_create()
+         descriptor = cv2.SIFT_create()
 
          (kps, features) = descriptor.detectAndCompute(gray, None)
 
@@ -61,7 +62,7 @@ class Stitcher:
 
         for m in rawMatches:
             if len(m) == 2 and m[0].distance < m[1].distance * ratio:
-                matches.append(m[0].trainIdx, m[0].queryIdx)
+                matches.append((m[0].trainIdx, m[0].queryIdx))
 
 
         if len(matches) > 4:
